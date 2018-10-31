@@ -1,0 +1,137 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<br />
+<div class="panel panel-default">
+
+    <div class="panel-heading">
+        <h3 class="text-center">درگاه پرداخت الکترونیک کارت دماوند</h3>
+    </div>
+
+    <div class="panel-body">
+        <br />
+        <div class="col-md-6 col-md-offset-4">
+
+            <form method="post" action="~/Home/SendCustomerToIPG">
+
+                <div class="form-horizontal" style="direction:rtl">
+
+                    <div class="form-group">
+
+                        <div class="col-md-5" >
+
+                            <input class="form-control" type="number" id="AmountInput" value="1000" style="direction:ltr" />
+
+                        </div>
+
+                        <label class="col-md-2">
+                            مبلغ
+                        </label>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <div class="col-md-5">
+
+                            <select class="form-control" id="LanguageInput">
+                                <option value="fa" selected>فارسی</option>
+                                <option value="en">انگلیسی</option>
+                            </select>
+
+                        </div>
+
+                        <label class="col-md-2">
+                            زبان
+                        </label>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <div class="col-md-5">
+
+                            <input class="form-control" type="number" id="BuyIDInput" value="1000" style="direction:ltr" />
+
+                        </div>
+
+                        <label class="col-md-2">
+                            شناسه خرید
+                        </label>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <div class="col-md-5">
+
+                            <input class="btn btn-default btn-block" type="button" value="ارسال"  onclick="SendDataToServer();"/>
+
+                        </div>
+
+                      
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+<form id="From_SendCustomerToIPG" method="post" action="@Sample_ECDIPG.Models.IPGECD.PayStart_url">
+    <input type="hidden" name="Token" id="TokenInput"/>
+</form>
+<script>
+
+    function SendDataToServer()
+    {
+        if (window.FormData !== undefined) {
+            var fileData = new FormData();
+
+            fileData.append('Amount', $('#BuyIDInput').val());
+            fileData.append('Language', $('#LanguageInput').val());
+            fileData.append('BuyID', $('#BuyIDInput').val());
+
+            $.ajax({
+                type: "POST",
+                url: "/Home/SendCustomerToIPG",
+                data: fileData,
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                success: function (data) {
+
+                    if (data.State == 1)
+                    {
+                        $('#TokenInput').val(data.Res);
+                        $('#From_SendCustomerToIPG').submit();
+                    }
+                    else
+                    {
+                        alert(data.ErrorCode + " - " + data.ErrorDescription);
+                    }
+                },
+                failure: function (response)
+                {
+
+                    alert("");
+                },
+                error: function (response)
+                {
+
+                    alert("");
+                }
+            });
+        }
+        else
+            alert("");
+    }
+
+</script>
